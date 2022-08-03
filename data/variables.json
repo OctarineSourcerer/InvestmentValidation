@@ -1,0 +1,12 @@
+{
+    "variables": [
+        {"name": "Objective", "independent": true },
+        {"name": "Want", "independent": false},
+        {"name": "Need", "independent": false},
+        {"name": "Importance", "independent": false},
+        {"name": "Investment", "independent": false},
+        {"name": "OwnPower", "independent": false},
+        {"name": "EnemyPower", "independent": false},
+        {"name": "Tension", "independent": false}
+    ]
+}

@@ -1,5 +1,8 @@
 module InvestmentValidation
+include("variables.jl")
 
-greet() = print("Hello World!")
+export greet
+
+greet() = print("Oh Hello World!")
 
 end # module

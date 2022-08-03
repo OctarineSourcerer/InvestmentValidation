@@ -1,6 +1,9 @@
 {
     "variables": [
         {"name": "Objective", "independent": true },
+        {"name": "Experience", "independent": true},
+        {"name": "RitualCritical", "independent": true},
+
         {"name": "Want", "independent": false},
         {"name": "Need", "independent": false},
         {"name": "Importance", "independent": false},

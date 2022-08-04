@@ -1,45 +1,56 @@
 using DataFrames, DataFramesMeta, OrderedCollections
 
-struct Variable
+# Mutable for now so it's easy to construct a list of em
+mutable struct Variable
     name::String
     independent::Bool
+end
+# Values used to colour dependent and independent variables
+const independentColour = :yellow
+const dependentColour = :light_blue
+function getVarColor(var)
+    if var.independent independentColour else dependentColour end
 end
 
 "Ask the user for a set of variables to tag onto questions, for easy checking"
 function askForVariables()
-    variables = []
+    variables = Vector{Variable}()
     println("Which variables exist in this study? For example, (without quotes) 'Objective' or 'Tension'. Note that this will not return duplicate copies.")
     println("Write an empty line to end here.")
     while true
         print("Variable: ")
-        observation = readline()
-        if observation == "" break end
-        push!(variables, observation)
+        input = readline()
+        if input == "" break end
+        push!(variables, Variable(input, false))
     end
 
-    vars = Variable[]
     println()
-    println("Which of these are independent variables? (eg '1 3')")
     while true
+        print("Choose which variables to toggle between "); printstyled("dependent", color=dependentColour); print(" and "); printstyled("independent", color=independentColour); println(" (eg '1 3')")
         for (i, var) in enumerate(variables)
-            printstyled("$i: ", color=:blue)
-            println(var)
+            printstyled("$i: ", color=getVarColor(var))
+            println(var.name)
         end
         input =  readline()
         if input == ""
-            return missing
+            break
         end
         elements = split(input, " ")
         try
-            numbers = map( x -> parse(Int, x), elements)
+            numbers = map(x -> parse(Int, x), elements)
             if !all(i -> i > 0 && i <= lastindex(variables), numbers)
                 error("User supplied number outside bounds of variables given")
+            end
+            for num in numbers
+                v = variables[num]
+                v.independent = !v.independent
             end
         catch
             println("Please only write numbers")
             continue
         end
     end
+    variables
 end
 
 function askForVariableValues(variableSet::Set, enforceAllSet=true)

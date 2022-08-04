@@ -1,4 +1,4 @@
-using DataFrames, DataFramesMeta, OrderedCollections
+using DataFrames, DataFramesMeta, OrderedCollections, JSON
 export Variable
 
 struct Variable
@@ -55,7 +55,13 @@ function askForVariables(inputStream=stdin)::Vector{Variable}
     variables
 end
 
-function askForVariableValues(variableSet::Set, enforceAllSet=true, input=stdin)
+function readVariablesFromJSON(path)
+    map(JSON.parsefile(path)) do jsonVar
+        Variable(jsonVar["name"], jsonVar["independent"])
+    end
+end
+
+function askForVariableValues(variableSet::Set{Variable}, enforceAllSet=true, input=stdin)
     results = Dict()
     for variableName in variableSet
         print("$(variableName): ")

@@ -1,7 +1,7 @@
 using DataFrames, DataFramesMeta, OrderedCollections
+export Variable
 
-# Mutable for now so it's easy to construct a list of em
-mutable struct Variable
+struct Variable
     name::String
     independent::Bool
 end
@@ -12,26 +12,28 @@ function getVarColor(var)
     if var.independent independentColour else dependentColour end
 end
 
-"Ask the user for a set of variables to tag onto questions, for easy checking"
-function askForVariables()
-    variables = Vector{Variable}()
+"Ask the user for a set of variables that are present"
+function askForVariables(inputStream=stdin)::Vector{Variable}
+    variables = []
     println("Which variables exist in this study? For example, (without quotes) 'Objective' or 'Tension'. Note that this will not return duplicate copies.")
     println("Write an empty line to end here.")
+    # Get a list of variable names. set them all to dependent by default
     while true
         print("Variable: ")
-        input = readline()
+        input = readline(inputStream)
         if input == "" break end
         push!(variables, Variable(input, false))
     end
 
     println()
+    # Allow the user to toggle dependence of any of the variables they've specified so far
     while true
         print("Choose which variables to toggle between "); printstyled("dependent", color=dependentColour); print(" and "); printstyled("independent", color=independentColour); println(" (eg '1 3')")
         for (i, var) in enumerate(variables)
             printstyled("$i: ", color=getVarColor(var))
             println(var.name)
         end
-        input =  readline()
+        input = readline(inputStream)
         if input == ""
             break
         end
@@ -43,7 +45,7 @@ function askForVariables()
             end
             for num in numbers
                 v = variables[num]
-                v.independent = !v.independent
+                variables[num] = Variable(v.name, !v.independent)
             end
         catch
             println("Please only write numbers")
@@ -53,11 +55,11 @@ function askForVariables()
     variables
 end
 
-function askForVariableValues(variableSet::Set, enforceAllSet=true)
+function askForVariableValues(variableSet::Set, enforceAllSet=true, input=stdin)
     results = Dict()
     for variableName in variableSet
         print("$(variableName): ")
-        value = readline()
+        value = readline(input)
         if value == "" 
             if enforceAllSet 
                 return missing

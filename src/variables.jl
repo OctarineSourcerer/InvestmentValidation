@@ -1,5 +1,5 @@
 using DataFrames, DataFramesMeta, OrderedCollections, JSON
-import Base: ==
+import Base: ==, show
 export Variable
 
 mutable struct Variable
@@ -16,24 +16,21 @@ end
 const independentColour = :yellow
 const dependentColour = :light_blue
 
-function getVarColor(var)
-    if var.independent independentColour else dependentColour end
-end
-
-function printVariables(variables)
-    for (i, var) in enumerate(variables)
-        printstyled("$i: ", color=getVarColor(var))
-        println(var.name)
+function show(io::IO, x::AbstractVector{Variable})
+    for (i, var) in enumerate(x)
+        colour = if var.independent independentColour else dependentColour end
+        printstyled(io, "$i: ", color=colour)
+        println(io, var.name)
     end
 end
 
 function chooseIndices(array; inputStream = stdin)
-    input = readline(inputStream)
-    if input == ""
-        return missing
-    end
-    elements = split(input, " ")
     while true
+        input = readline(inputStream)
+        if input == ""
+            return missing
+        end
+        elements = split(input, " ")
         try
             numbers = map(x -> parse(Int, x), elements)
             if !all(i -> i > 0 && i <= lastindex(array), numbers)
@@ -53,10 +50,10 @@ end
 Runs preMessageFunction before letting the user choose variables, then running the given function on them
 """
 # messageFunction lets you do fancy printing without this function ever touching the formatting. But, do a version that lets in just the string?
-function chooseVariablesAndDo(doWithChosen, preMessageFunction, variables; inputStream=stdin, justOnce=false)
+function chooseVariablesAndDo(doWithChosen, preMessageFunction, variables::AbstractVector{Variable}; inputStream=stdin, justOnce=false)
     while true
         preMessageFunction()
-        printVariables(variables)
+        show(stdout, variables)
         numbers = chooseIndices(variables; inputStream=inputStream)
         if ismissing(numbers)
             break
@@ -71,7 +68,7 @@ end
 
 "Ask the user for a set of variables that are present"
 function askForVariables(inputStream=stdin)::Vector{Variable}
-    variables = []
+    variables = Vector{Variable}()
     println("Which variables exist in this study? For example, (without quotes) 'Objective' or 'Tension'. Note that this will not return duplicate copies.")
     println("Write an empty line to end here.")
     # Get a list of variable names. set them all to dependent by default

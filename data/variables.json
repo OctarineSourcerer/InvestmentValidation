@@ -1,4 +1,5 @@
 [
+    {"name": "Participant ID", "independent": true},
     {"name": "Consent", "independent": true},
     {"name": "Experience", "independent": true},
     {"name": "RitualCritical", "independent": true},

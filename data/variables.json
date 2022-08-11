@@ -1,8 +1,11 @@
 {
     "variables": [
+        {"name": "ParticipantID", "independent": true },
         {"name": "Objective", "independent": true },
         {"name": "Experience", "independent": true},
         {"name": "RitualCritical", "independent": true},
+        {"name": "AttackMages", "independent": true},
+        {"name": "AttackYaltha", "independent": true},
 
         {"name": "Want", "independent": false},
         {"name": "Need", "independent": false},

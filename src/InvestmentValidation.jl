@@ -1,5 +1,6 @@
 module InvestmentValidation
 include("variables.jl")
+include("dataPrep.jl")
 
 export greet
 

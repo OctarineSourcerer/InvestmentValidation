@@ -1,18 +1,18 @@
-{
-    "variables": [
-        {"name": "ParticipantID", "independent": true },
-        {"name": "Objective", "independent": true },
-        {"name": "Experience", "independent": true},
-        {"name": "RitualCritical", "independent": true},
-        {"name": "AttackMages", "independent": true},
-        {"name": "AttackYaltha", "independent": true},
+[
+    {"name": "Participant ID", "independent": true},
+    {"name": "Consent", "independent": true},
+    {"name": "Experience", "independent": true},
+    {"name": "RitualCritical", "independent": true},
+    {"name": "AttackedMages", "independent": true},
+    {"name": "AttackedYalthaToo", "independent": true},
 
-        {"name": "Want", "independent": false},
-        {"name": "Need", "independent": false},
-        {"name": "Importance", "independent": false},
-        {"name": "Investment", "independent": false},
-        {"name": "OwnPower", "independent": false},
-        {"name": "EnemyPower", "independent": false},
-        {"name": "Tension", "independent": false}
-    ]
-}
+    {"name": "Objective", "independent": true },
+
+    {"name": "Want", "independent": false},
+    {"name": "Need", "independent": false},
+    {"name": "Importance", "independent": false},
+    {"name": "Investment", "independent": false},
+    {"name": "OwnPower", "independent": false},
+    {"name": "EnemyPower", "independent": false},
+    {"name": "Tension", "independent": false}
+]

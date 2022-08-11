@@ -115,14 +115,18 @@ end
 
 "Given a set of variables, let the user assign these to questions"
 function tagData(data, variables::Vector{Variable}; inputStream=stdin)
-    # show(column)
-    function printF()
-        println("Which variable does this measure? Empty line to skip.")
-    end
-    chooseVariablesAndDo(printF, variables, justOnce=true) do var
-        push!(colMeasures, (colName => var))
-    end
-    vars = askForVariableValues(variableSet)
+    colNames = names(data)
+    colMeasures = Dict{String, Variable}()
+    for colName in colNames
+        column = data[:, colName]
+        println("Column $(colName)")
+        # show(column)
+        function printF()
+            println("Which variable does this measure? Empty line to skip.")
+        end
+        chooseVariablesAndDo(printF, variables, justOnce=true) do var
+            push!(colMeasures, (colName => var))
+        end
     end
     colMeasures
 end

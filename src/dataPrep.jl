@@ -17,7 +17,7 @@ Return two dataframes in a tuple: `participantData` contains variables supplied 
 - `primaryKey::String`: Name of variable measured that's unique per response. Usually something like ParticipantID
 - `singleVars::Vector{String}`: Variables that are measured once per response, excluding the primary key. For example consent, prior experience etc. This dictates what is returned in `participantData`.
 - `tangledHeaderFilter`: A function that returns true for header names that include the tangled variable.
-- `untangleHeaderText`: A function that takes a tangled header, and returns the values of BOTH variables measured in that question
+- `untangleHeaderText`: A function that takes a tangled header (string), and returns the values of BOTH variables measured in that question in a named tuple, eg `(:objective="FortFirst", :tensionAspect="OwnPower"`
 """
 function untangleData(data, primaryKey::String, singleVars::Vector{String}, tangledHeaderFilter, untangleHeaderText)
     singleVars = [primaryKey, singleVars...]

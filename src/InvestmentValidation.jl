@@ -2,8 +2,18 @@ module InvestmentValidation
 include("variables.jl")
 include("dataPrep.jl")
 
-export greet
+export shortcut
 
-greet() = print("Oh Hello World!")
+function shortcut()
+    data = readAnnotatedData("data/annotatedResponses.csv", 4)
+    untangleData(data, "ParticipantID", singleVars, objectiveHeaders, objectiveAspectPair)
+end
+
+function objectiveAspectPair(dataHeader::String)
+    result = match(r"Objective\((?'objective'\w+)\), (?'aspect'\w+)", dataHeader)
+    (objective = result[:objective], aspect = result[:aspect])
+end
+objectiveHeaders(x) = contains(x, "Objective")
+singleVars = ["Consent", "Experience", "RitualCritical", "AttackMages", "AttackYaltha"]
 
 end # module

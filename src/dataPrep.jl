@@ -1,13 +1,13 @@
 using CSV, DataFrames, DataFramesMeta
 
-# TODO: Given variables to observe, give back only needed columns
+# TODO: Make this general
 # We want to observe ID -> per-participant things
 # And separately, ID, objective, aspect...
 # Why? because those objectives and aspects are multiple times per participant, the others just once per participants
 # I'm gonna call these Tangled questions
 function readAnnotatedData(path, variableNamesRow, variablesToObserve)
     primaryKey = "ParticipantID"
-    singleVars = [primaryKey, "Consent", "Experience", "RitualCritical", "AttackedMages", "AttackedYaltha"]
+    singleVars = [primaryKey, "Consent", "Experience", "RitualCritical", "AttackMages", "AttackYaltha"]
     implicitVar = :objective # The *hidden* variable - the one we need to shrink columns and expand rows for
 
     function objectiveAspectPair(colName::String)
@@ -21,9 +21,11 @@ function readAnnotatedData(path, variableNamesRow, variablesToObserve)
     # Stack: variable column will contain which cluster (element of objectiveColNames) is being measured. And the value for each
     stacked = stack(df, objectiveColNames, [:ParticipantID])
     @transform! stacked @astable begin 
-        parts = map(objectiveAspectPair, :variable) # Can't broadcast here for some reason. I think dataframesMeta is dying on the sumbol replacement?!
+    parts = map(objectiveAspectPair, :variable) # Can't broadcast here for some reason. I think dataframesMeta is dying on the sumbol replacement?!
         :Objective = map(x -> getproperty(x, ^(:objective)), parts)
         :Aspect = map(x -> getproperty(x, ^(:aspect)), parts)
     end
-    stacked[:, Not(:variable)] |> dropmissing
+    observations = stacked[:, Not(:variable)] |> dropmissing
+    participantData = DataFrame(df)[:, singleVars]
+    (observations, participantData)
 end

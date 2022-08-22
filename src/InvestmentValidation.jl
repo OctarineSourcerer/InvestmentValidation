@@ -11,9 +11,14 @@ end
 objectiveHeaders(x) = contains(x, "Objective")
 singleVars = ["Consent", "Experience", "RitualCritical", "AttackMages", "AttackYaltha"]
 
-function shortcut()
+# Returns (participantData, observations)
+function getData()
     data = readAnnotatedData("data/annotatedResponses.csv", 4)
     untangleData(data, :ParticipantID, singleVars, objectiveHeaders, objectiveAspectPair)
+end
+
+function shortcut()
+    (participantData, observations) = getData()
 end
 
 end # module

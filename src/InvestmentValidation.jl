@@ -1,4 +1,5 @@
 module InvestmentValidation
+using Statistics
 include("variables.jl")
 include("dataPrep.jl")
 include("paperGraphs.jl")
@@ -19,9 +20,13 @@ function getData()
 end
 
 function shortcut()
+    aspects = [:Importance, :Want, :Need, :Investment, :OwnPower, :EnemyPower, :Tension]
+
     (participantData, observations) = getData()
     unstacked = unstack(observations, :aspect, :value) |> dropmissing
-    
+    byPart = groupby(unstacked, :ParticipantID)
+    participantAverages = combine(byPart, aspects .=> mean .=> aspects)
+    plotScatters(participantAverages)
 end
 
 end # module

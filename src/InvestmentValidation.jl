@@ -96,5 +96,6 @@ end
 
 # TODO: Graph the different forms of investment.
 # TODO: WHY are there such weak correlations, particularly in what seems like OwnPower? It seems that OwnPower and EnemyPower CAN be separated, and in this case it's likely to be via confusion. It also means that the correlation between enemy power and own power is weak.
+# TODO: Look at particularly strong outliers and see if they're dumpable - is the data cleaner then?
 
 end # module

@@ -63,18 +63,12 @@ function heatmap(aspectX,aspectY; data, objFilter=missing, annotate=true, textCo
         minorgridstyle=:solid, aspect_ratio=:none, tick_direction=:out,annotations=anns; kwargs...)
 end
 
-relationships = [
-    (:Investment, :Tension),
-    (:EnemyPower, :OwnPower),
-    (:OwnPower, :Tension),
-    (:EnemyPower, :Tension)
-]
 function plotScatter(data, (x,y))
     scatter(data[!,x], data[!,y], xlabel=x, ylabel=y, legend=false)
 end
-function plotScatters(data)
+function plotScatters(data, relationships)
     subplots = [plotScatter(data, rel) for rel in relationships]
-    plot(subplots..., layout=4)
+    plot(subplots..., layout=length(relationships))
 end
 
 function plotHeatmaps(byAspect)

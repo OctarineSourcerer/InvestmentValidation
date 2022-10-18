@@ -3,6 +3,7 @@ export plotHeatmaps, plotScatters
 
 using Plots, StatsPlots
 
+Plots.default(size=(1080,720))
 colorscheme = :amp
 textCol = "#555577"
 
@@ -63,13 +64,14 @@ function heatmap(aspectX,aspectY; data, objFilter=missing, annotate=true, textCo
         minorgridstyle=:solid, aspect_ratio=:none, tick_direction=:out,annotations=anns; kwargs...)
 end
 
-function plotScatter(data, (x,y))
-    scatter(data[!,x], data[!,y], xlabel=x, ylabel=y, legend=false)
+function plotScatter(data, (x,y); kwargs...)
+    scatter(data[!,x], data[!,y], xlabel=x, ylabel=y, legend=false; kwargs...)
 end
-function plotScatters(data, relationships)
-    subplots = [plotScatter(data, rel) for rel in relationships]
+function plotScatters(data, relationships; kwargs...)
+    subplots = [plotScatter(data, rel; kwargs...) for rel in relationships]
     plot(subplots..., layout=length(relationships))
 end
+
 
 function plotHeatmaps(byAspect)
     
@@ -101,4 +103,19 @@ function plotHeatmaps(byAspect)
     heatmap(:EnemyPower, :Tension, data=byAspect, title="", 
     xlabel="Opponent Power", ylabel="Tension", c=colorscheme, textColour=textCol)
     savefig("./pics/paper/OpponentVsTension")
+end
+
+function participantObjectivesSpread(observations)
+    all = [:Importance, :Want, :Need, :Investment, :OwnPower, :EnemyPower, :Tension, :PowerDifference]
+    gdf = groupby(observations, :outlier)
+    for x in all
+        regular, outliers = gdf[(;outlier=false)], gdf[(;outlier=true)]
+        violin(regular.objective, regular[:,x]) 
+        scatter!(outliers.objective, outliers[:,x], hover=outliers.ParticipantID)
+        plot!(title=String(x)) |> display
+    end
+
+    # Weird observations this shows:
+    # 3IR felt the enemies had NO power to stop, though because they didn't ever find the ritual, they felt they had no power to destroy the ritual
+    # R_25ATgZ4RVxbTMkg was the only one who felt completely overwhelmed with the ritual - enemy had complete power to stop them, they had none
 end

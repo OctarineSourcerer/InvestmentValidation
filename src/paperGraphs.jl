@@ -108,11 +108,17 @@ end
 function participantObjectivesSpread(observations)
     all = [:Importance, :Want, :Need, :Investment, :OwnPower, :EnemyPower, :Tension, :PowerDifference]
     gdf = groupby(observations, :outlier)
-    for x in all
-        regular, outliers = gdf[(;outlier=false)], gdf[(;outlier=true)]
-        violin(regular.objective, regular[:,x]) 
-        scatter!(outliers.objective, outliers[:,x], hover=outliers.ParticipantID)
-        plot!(title=String(x)) |> display
+    for y in all
+        regular, outliers = get(gdf, (;outlier=false), nothing), get(gdf, (;outlier=true), nothing)
+        println("wot")
+        if !isnothing(regular)
+            @df regular violin(:objective, cols(y))
+            @df regular dotplot!(:objective, cols(y), hover=:ParticipantID)
+        end
+        if !isnothing(outliers)
+            scatter!(outliers.objective, outliers[:,y], hover=outliers.ParticipantID)
+        end
+        plot!(title=String(y)) |> display
     end
 
     # Weird observations this shows:

@@ -26,9 +26,10 @@ end
 objectiveHeaders(x) = contains(x, "Objective")
 singleVars = ["Consent", "Experience", "RitualCritical", "AttackMages", "AttackYaltha"]
 
+dataPath="data/annotatedResponsesNumeric.csv"
 # Returns (participantData, observations, mashedTogether)
-function getData()
-    data = readAnnotatedData("data/annotatedResponsesNumeric.csv", 4)
+function getData(path=dataPath)
+    data = readAnnotatedData(path, 4)
     initialLength = nrow(data)
     println("$initialLength rows")
     data = @subset(data, 
@@ -49,12 +50,12 @@ function getData()
         mashedTogether = innerjoin(averagesOver(observations, :ParticipantID), participantData, on=:ParticipantID))
 end
 
-function shortcut()
-    (participantData, observations, mashedTogether) = getData()
+function shortcut(dataPath=dataPath)
+    (participantData, observations, mashedTogether) = getData(dataPath)
 
     plotScatters(mashedTogether, meanRelationships)
     plot!(plot_title="By Participant") |> display
-    # @df participantAverages corrplot([:Investment :Tension :OwnPower :EnemyPower], fillcolor=cgrad()) |> display
+    # @df mashedTogether corrplot([:mean_Investment :mean_Tension :mean_OwnPower :mean_EnemyPower], fillcolor=cgrad()) |> display
 
     byObjective = averagesOver(observations, :objective)
     plotScatters(byObjective, meanRelationships) 
@@ -73,15 +74,19 @@ function shortcut()
     gimmeCorrs(mashedTogether, investsVsTension)
 end
 
-function markOutliers(participantData, naughtyList = ["R_3iRuUATOyVe0RUf", "R_25ATgZ4RVxbTMkg"])
-    inNaughtyList(id) = id in naughtyList
+naughtyList = ["R_3iRuUATOyVe0RUf", "R_25ATgZ4RVxbTMkg"]
+# TODO: Check why the heck these participants are outliers. I know I had good reasoning, but... I cannot remember them.
+# R_25xxx never made it past killing 3 or 4 enemies, did not interact with anything related to the ritual at all. Also took... half an hour to complete bless their soul
+# The otherone seems to be one of two people who never thought the opponents had any power at all really
+function markOutliers(participantData, outlierIDs = naughtyList)
+    inNaughtyList(id) = id in outlierIDs
     @transform(participantData,
         :outlier = inNaughtyList.(:ParticipantID))
 end
 # used to remove some of the genuine outlier participants so they can gtfo of my analysis
-function outlierExploration()
-    data = getData()
-    marked = markOutliers(data.mashedTogether)
+function outlierExploration(dataPath=dataPath, outlierIDs=naughtyList)
+    data = getData(dataPath)
+    marked = markOutliers(data.mashedTogether, outlierIDs)
 
     investsVsTension = meanTuple.(product(investmentForms, [:Tension]))
     plotScatters(marked, investsVsTension, group=marked.outlier, hover=marked.ParticipantID) |> display
